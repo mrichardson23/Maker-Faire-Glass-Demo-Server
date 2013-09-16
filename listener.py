@@ -55,13 +55,22 @@ while True:
 	xFloat = float(xyz[0])
 	yFloat = float(xyz[1])
 	if (xFloat > neutralX + (xRange / 2.0)):
-		#if we go out of range on X
+		#if we go out of range on X, reset the range
 		maxX = xFloat
 		minX = xFloat - xRange
 	if (xFloat < neutralX - (xRange / 2.0)):
-		#if we go under range on X
+		#if we go under range on X, reset the range
 		minX = xFloat
 		maxX = xFloat + xRange
+	if (maxX > 360):
+		#if we need to handle wraparound from 360 to 1:
+		if (xFloat < neutralX - 180):
+			xFloat = xFloat + 360
+	if (minX < 0):
+		#if we need to handle wraparound from 1 to 360:
+		if (xFloat > neutralX + 180):
+			xFloat = xFloat - 360
+			
 	xPos = mapValues (xFloat, minX, maxX , servoMin, servoMax)
 	yPos = mapValues (yFloat, minY, maxY , servoMin, servoMax)
 	updatePosition(int(xPos), int(yPos))
