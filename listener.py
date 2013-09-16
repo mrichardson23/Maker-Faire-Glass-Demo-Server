@@ -25,7 +25,7 @@ yServo = 1;
 servoNeutral = ((servoMax - servoMin) / 2) + servoMin
 
 #position setup:
-xRange = 150
+xRange = 200
 yRange = 150
 
 def updatePosition(x, y):
@@ -54,8 +54,16 @@ while True:
 	print "x:",  xyz[0] , " y: " , xyz[1] , " z: " , xyz[2]
 	xFloat = float(xyz[0])
 	yFloat = float(xyz[1])
+	if (xFloat > neutralX + (xRange / 2.0)):
+		#if we go out of range on X
+		maxX = xFloat
+		minX = xFloat - xRange
+	if (xFloat < neutralX - (xRange / 2.0)):
+		#if we go under range on X
+		minX = xFloat
+		maxX = xFloat + xRange
 	xPos = mapValues (xFloat, minX, maxX , servoMin, servoMax)
 	yPos = mapValues (yFloat, minY, maxY , servoMin, servoMax)
 	updatePosition(int(xPos), int(yPos))
 
-
+	print "xpos: ", str(int(xPos)), "ypos: ", str(int(yPos))
