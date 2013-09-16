@@ -5,7 +5,7 @@ from Adafruit_PWM_Servo_Driver import PWM
 
 # This is what gets your IP as a string (from Stackoverflow):
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-s.connect(("gmail.com", 80))
+s.connect(("192.168.0.254", 80))
 UDP_IP = s.getsockname()[0]
 s.close
 UDP_PORT = 4444
@@ -16,15 +16,17 @@ print "Listening to IP " + UDP_IP + ":" + str(UDP_PORT)
 
 # Servo setup:
 pwm = PWM(0x40, debug=True)
-servoMin = 150  # Min pulse length out of 4096
-servoMax = 400  # Max pulse length out of 4096
-pwm.setPWMFreq(60) 
+servoMin = 122  # Min pulse length out of 4096
+servoMax = 492  # Max pulse length out of 4096
+pwm.setPWMFreq(50) 
 xServo = 0;
 yServo = 1;
 
+servoNeutral = ((servoMax - servoMin) / 2) + servoMin
+
 #position setup:
-xRange = .5
-yRange = .8
+xRange = 150
+yRange = 150
 
 def updatePosition(x, y):
 	pwm.setPWM(xServo, 0, x)
@@ -32,6 +34,8 @@ def updatePosition(x, y):
 
 def mapValues(inputX, inputMin, inputMax, outputMin, outputMax):
 	return (inputX - inputMin) * (outputMax - outputMin) / (inputMax - inputMin) + outputMin
+
+updatePosition(servoNeutral, servoNeutral)
 
 print "waiting for first UDP message for neutral position..."
 data, add = sock.recvfrom(1024)
@@ -48,7 +52,6 @@ while True:
 	xyz = data.split(",")
 	os.system('clear')
 	print "x:",  xyz[0] , " y: " , xyz[1] , " z: " , xyz[2]
-
 	xFloat = float(xyz[0])
 	yFloat = float(xyz[1])
 	xPos = mapValues (xFloat, minX, maxX , servoMin, servoMax)
